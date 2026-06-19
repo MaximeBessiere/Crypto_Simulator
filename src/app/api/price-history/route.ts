@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
-import {
-  ASSET_AVAILABLE_SINCE,
-  ASSET_TO_BINANCE_SYMBOL,
-  BinanceError,
-  fetchPriceHistory,
-  type SupportedAsset,
-} from "@/lib/api/binance";
+import { BinanceError, fetchPriceHistory } from "@/lib/api/binance";
+import { ASSET_AVAILABLE_SINCE, ASSET_TO_BINANCE_SYMBOL, type SupportedAsset } from "@/lib/assets";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

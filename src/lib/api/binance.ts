@@ -1,24 +1,8 @@
 import type { PricePoint } from "../../types/dca";
+import { ASSET_AVAILABLE_SINCE, ASSET_TO_BINANCE_SYMBOL, isSupportedAsset } from "../assets";
 
-export type SupportedAsset = "bitcoin" | "ethereum" | "solana" | "cardano";
-
-export const ASSET_TO_BINANCE_SYMBOL: Record<SupportedAsset, string> = {
-  bitcoin: "BTCEUR",
-  ethereum: "ETHEUR",
-  cardano: "ADAEUR",
-  solana: "SOLEUR",
-};
-
-// Date de la première bougie EUR réellement disponible sur Binance pour chaque
-// actif (vérifié en direct le 2026-06-19 via /api/v3/klines). En-deçà de ces
-// dates, la paire EUR n'existait simplement pas encore sur l'exchange — ce
-// n'est pas une limite de l'API, c'est l'historique réel du marché.
-export const ASSET_AVAILABLE_SINCE: Record<SupportedAsset, Date> = {
-  bitcoin: new Date(Date.UTC(2020, 0, 3)),
-  ethereum: new Date(Date.UTC(2020, 0, 3)),
-  cardano: new Date(Date.UTC(2020, 10, 13)),
-  solana: new Date(Date.UTC(2021, 4, 28)),
-};
+export type { SupportedAsset } from "../assets";
+export { ASSET_AVAILABLE_SINCE, ASSET_TO_BINANCE_SYMBOL } from "../assets";
 
 const BINANCE_KLINES_URL = "https://api.binance.com/api/v3/klines";
 const MAX_CANDLES_PER_REQUEST = 1000;
@@ -36,10 +20,6 @@ export class BinanceError extends Error {
 
 // Format d'une bougie renvoyée par /klines : [openTime, open, high, low, close, volume, closeTime, ...]
 type Kline = [number, string, string, string, string, string, number, ...unknown[]];
-
-function isSupportedAsset(asset: string): asset is SupportedAsset {
-  return asset in ASSET_TO_BINANCE_SYMBOL;
-}
 
 async function fetchKlinesPage(
   symbol: string,

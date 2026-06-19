@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Simulateur Crypto DCA",
+  title: "Simulateur Crypto",
   description: "Simulateur d'investissement crypto en Dollar Cost Averaging",
 };
 
