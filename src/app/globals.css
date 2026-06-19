@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0a0e1a;
+  --color-surface: #131a2a;
+  --color-border-subtle: #1e2940;
+  --color-accent-primary: #2d7ff9;
+  --color-accent-secondary: #f5b82e;
+  --color-text-primary: #f5f7fa;
+  --color-text-secondary: #8a9bb8;
+  --color-positive: #2ecc71;
+  --color-negative: #e74c3c;
+
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background-color: var(--color-background);
+  background-image: radial-gradient(
+    ellipse 80% 50% at 50% -10%,
+    rgba(45, 127, 249, 0.18),
+    transparent
+  );
+  background-repeat: no-repeat;
+}
