@@ -7,6 +7,7 @@ import {
   formatEURTrim,
   formatPercent,
 } from "@/lib/format";
+import { InfoTooltip } from "./InfoTooltip";
 
 const FREQUENCY_ADVERB: Record<Frequency, string> = {
   once: "en une seule fois",
@@ -30,6 +31,15 @@ function CardShell({ className, children }: { className?: string; children: Reac
     <div className={`h-full rounded-2xl border border-border-subtle bg-surface p-6 ${className ?? ""}`}>
       {children}
     </div>
+  );
+}
+
+function CardLabel({ text, info }: { text: string; info: string }) {
+  return (
+    <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-text-secondary">
+      {text}
+      <InfoTooltip text={info} />
+    </p>
   );
 }
 
@@ -69,9 +79,10 @@ export function ResultsCards({
     <div className="grid h-full grid-cols-1 gap-4 sm:grid-cols-3 sm:grid-rows-[auto_1fr]">
       {/* Carte 1 : Capital final, avec sa décomposition investi / plus-value */}
       <CardShell className="sm:col-span-2">
-        <p className="text-xs font-medium uppercase tracking-wide text-text-secondary">
-          Capital final
-        </p>
+        <CardLabel
+          text="Capital final"
+          info="La valeur totale de votre portefeuille à la date de fin, au prix actuel de l'actif."
+        />
         <p className="mt-2 flex items-baseline gap-2">
           <span className="text-4xl font-bold text-text-primary">
             {formatAmountFR(result.finalValue)}
@@ -96,9 +107,10 @@ export function ResultsCards({
 
       {/* Carte 2 : Performance, seule */}
       <CardShell className="flex flex-col">
-        <p className="text-xs font-medium uppercase tracking-wide text-text-secondary">
-          Performance
-        </p>
+        <CardLabel
+          text="Performance"
+          info="L'évolution en pourcentage entre le capital investi et le capital final."
+        />
         <div className="flex flex-1 items-center justify-center">
           <p
             className={`whitespace-nowrap text-2xl font-bold ${
@@ -112,14 +124,17 @@ export function ResultsCards({
 
       {/* Carte 3 : Acquis + Prix moyen, les deux métriques "par unité" du DCA */}
       <CardShell>
-        <p className="text-xs font-medium uppercase tracking-wide text-text-secondary">Acquis</p>
+        <CardLabel text="Acquis" info="La quantité totale de cryptomonnaie accumulée sur la période." />
         <p className="mt-2 whitespace-nowrap text-lg font-bold text-text-primary">
           {acquiredText}
         </p>
 
-        <p className="mt-4 text-xs font-medium uppercase tracking-wide text-text-secondary">
-          Prix moyen d&apos;acquisition
-        </p>
+        <div className="mt-4">
+          <CardLabel
+            text="Prix moyen d'acquisition"
+            info="Le prix moyen auquel vous avez acheté l'actif, tous achats confondus."
+          />
+        </div>
         <p className="mt-2 whitespace-nowrap text-lg font-bold text-text-primary">
           {formatEUR(result.averagePrice)}
         </p>

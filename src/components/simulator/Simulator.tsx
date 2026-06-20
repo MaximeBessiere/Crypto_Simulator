@@ -5,6 +5,7 @@ import { calculateDca } from "@/lib/dca/calculate";
 import { ASSET_AVAILABLE_SINCE, ASSET_OPTIONS } from "@/lib/assets";
 import type { DcaResult, PricePoint } from "@/types/dca";
 import { InputForm, type DcaFormValues } from "./InputForm";
+import { PortfolioChart } from "./PortfolioChart";
 import { ResultsCards } from "./ResultsCards";
 
 const DEBOUNCE_MS = 500;
@@ -124,47 +125,50 @@ export function Simulator() {
   );
 
   return (
-    <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
-      <section className="flex flex-col gap-6">
-        <SectionTitle title="Simulation" />
-        <InputForm values={values} onChange={setValues} />
-      </section>
+    <div className="space-y-10">
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+        <section className="flex flex-col gap-6">
+          <SectionTitle title="Simulation" />
+          <InputForm values={values} onChange={setValues} notice={notice} />
+        </section>
 
-      <section className="flex flex-col gap-6">
-        <SectionTitle title="Vos résultats" />
+        <section className="flex flex-col gap-6">
+          <SectionTitle title="Vos résultats" />
 
-        {notice && (
-          <div className="rounded-xl border border-accent-secondary/30 bg-accent-secondary/10 px-4 py-3 text-sm text-accent-secondary">
-            {notice}
-          </div>
-        )}
-
-        {error && (
-          <div className="rounded-xl border border-negative/30 bg-negative/10 px-4 py-3 text-sm text-negative">
-            {error}
-          </div>
-        )}
-
-        <div className="lg:flex-1">
-          {isLoading && <ResultsSkeleton />}
-          {!isLoading && result && (
-            <ResultsCards
-              result={result}
-              symbol={selectedAsset?.symbol ?? ""}
-              assetLabel={selectedAsset?.label ?? ""}
-              frequency={debouncedValues.frequency}
-              amountPerPeriod={debouncedValues.amountPerPeriod}
-              startDate={new Date(debouncedValues.startDate)}
-              endDate={new Date(debouncedValues.endDate)}
-            />
+          {error && (
+            <div className="rounded-xl border border-negative/30 bg-negative/10 px-4 py-3 text-sm text-negative">
+              {error}
+            </div>
           )}
-          {!isLoading && !result && !error && (
-            <p className="text-sm text-text-secondary">
-              Renseignez les paramètres pour lancer la simulation.
-            </p>
-          )}
-        </div>
-      </section>
+
+          <div className="lg:flex-1">
+            {isLoading && <ResultsSkeleton />}
+            {!isLoading && result && (
+              <ResultsCards
+                result={result}
+                symbol={selectedAsset?.symbol ?? ""}
+                assetLabel={selectedAsset?.label ?? ""}
+                frequency={debouncedValues.frequency}
+                amountPerPeriod={debouncedValues.amountPerPeriod}
+                startDate={new Date(debouncedValues.startDate)}
+                endDate={new Date(debouncedValues.endDate)}
+              />
+            )}
+            {!isLoading && !result && !error && (
+              <p className="text-sm text-text-secondary">
+                Renseignez les paramètres pour lancer la simulation.
+              </p>
+            )}
+          </div>
+        </section>
+      </div>
+
+      {!isLoading && result && (
+        <section className="flex flex-col gap-6">
+          <SectionTitle title="Évolution du portefeuille" />
+          <PortfolioChart timeSeries={result.timeSeries} />
+        </section>
+      )}
     </div>
   );
 }
