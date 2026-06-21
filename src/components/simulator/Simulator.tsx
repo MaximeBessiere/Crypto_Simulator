@@ -50,12 +50,14 @@ export function Simulator() {
       setError("Renseignez un montant positif et des dates valides.");
       setResult(null);
       setNotice(null);
+      setIsLoading(false);
       return;
     }
     if (new Date(endDate).getTime() < new Date(startDate).getTime()) {
       setError("La date de fin doit être postérieure à la date de début.");
       setResult(null);
       setNotice(null);
+      setIsLoading(false);
       return;
     }
 

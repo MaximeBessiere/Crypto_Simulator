@@ -111,7 +111,7 @@ export function ResultsCards({
           text="Performance"
           info="L'évolution en pourcentage entre le capital investi et le capital final."
         />
-        <div className="flex flex-1 items-center justify-center">
+        <div className="flex flex-1 items-center">
           <p
             className={`whitespace-nowrap text-2xl font-bold ${
               isGain ? "text-positive" : "text-negative"

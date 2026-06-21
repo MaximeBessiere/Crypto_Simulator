@@ -78,13 +78,24 @@ export async function fetchPriceHistory(
   const availableSince = ASSET_AVAILABLE_SINCE[asset];
   const now = new Date();
 
+  // Plage entièrement future : ce n'est pas un problème de listing de l'actif,
+  // donc un message dédié plutôt que de réutiliser celui du recadrage
+  // "historique pas encore disponible" ci-dessous. Erreur de saisie utilisateur
+  // (4xx), pas un problème amont (Binance n'a simplement pas de prix futurs).
+  if (from.getTime() > now.getTime()) {
+    throw new BinanceError("La période demandée est dans le futur. Choisissez des dates passées.", 400);
+  }
+
   const effectiveTo = to.getTime() > now.getTime() ? now : to;
   const effectiveFrom = from.getTime() < availableSince.getTime() ? availableSince : from;
 
   if (effectiveTo.getTime() < effectiveFrom.getTime()) {
+    // Plage entièrement antérieure au listing de l'actif : également une
+    // erreur de saisie utilisateur (4xx), pas un problème amont.
     throw new BinanceError(
       `Aucune donnée disponible : l'historique EUR de cet actif démarre le ` +
-        `${availableSince.toLocaleDateString("fr-FR")}, après la fin de la plage demandée.`
+        `${availableSince.toLocaleDateString("fr-FR")}, après la fin de la plage demandée.`,
+      400
     );
   }
 
