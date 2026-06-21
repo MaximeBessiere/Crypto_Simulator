@@ -94,7 +94,17 @@ export function PortfolioChart({ timeSeries }: PortfolioChartProps) {
 
   return (
     <div className="h-80 w-full rounded-2xl border border-border-subtle bg-surface p-6">
-      <ResponsiveContainer width="100%" height="100%">
+      {/*
+        Recharts' ResponsiveContainer starts its internal size state at
+        { width: -1, height: -1 } and only corrects it after the first
+        ResizeObserver callback (i.e. after the initial paint), which makes it
+        warn on every mount by default. `initialDimension` lets us seed that
+        state with the height we already know statically: the card is h-80
+        (320px) with p-6 padding (24px) on each side, so the inner content
+        area is 320 - 24*2 = 272px. Recharts only needs one positive
+        dimension to skip the warning, so the (unknown) width can stay -1.
+      */}
+      <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: -1, height: 272 }}>
         <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="portfolioGradient" x1="0" y1="0" x2="0" y2="1">

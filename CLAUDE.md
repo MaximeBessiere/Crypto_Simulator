@@ -77,6 +77,15 @@ doit être remplaçable sans toucher au calcul.
   avec `TooltipProps` (qui n'a plus `payload`/`label`/`active` — déplacés dans
   `TooltipContentProps`). Vérifié dans `node_modules/recharts/types/component/
   Tooltip.d.ts` avant d'écrire `PortfolioChart.tsx`, pas supposé.
+- **`ResponsiveContainer` warning "width(-1) height(-1)" au montage** : son
+  état interne démarre à `{ width: -1, height: -1 }` et n'est corrigé qu'après
+  le premier callback `ResizeObserver` (donc après le rendu initial) — il
+  prévient donc à chaque montage par défaut, même avec un conteneur de taille
+  fixe. Corrigé en passant `initialDimension={{ width: -1, height: <hauteur
+  connue> }}` (une seule dimension positive suffit à supprimer le warning,
+  voir `node_modules/recharts/es6/component/ResponsiveContainer.js`). Si la
+  hauteur du conteneur du graphe change (`h-80 p-6` dans `PortfolioChart.tsx`),
+  mettre à jour la valeur `272` en conséquence (hauteur du conteneur − padding).
 
 ## Scripts de vérification (pas des tests automatisés)
 
