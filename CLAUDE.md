@@ -113,8 +113,6 @@ l'instant.
 
 ## Reste à faire
 
-- **README.md** : encore le boilerplate par défaut de `create-next-app`
-  (mentionne la police Geist, qu'on n'utilise plus). À réécrire.
 - **Polish** : bulle d'info sur le champ "Actif numérique" peut légèrement
   dépasser à gauche sur très petit viewport (bug mineur connu, pas corrigé).
   Pas de tests unitaires automatisés sur `calculateDca`/`binance.ts`.
@@ -127,3 +125,14 @@ l'instant.
   résultats (Capital final, Performance, Acquis, Prix moyen d'acquisition).
 - Notice (recadrage de plage par actif) déplacée sous le champ "Depuis",
   visuellement distincte d'une vraie erreur (rouge, masque les cartes).
+- Plage de dates future : message dédié ("La période demandée est dans le
+  futur...") avec status HTTP 400 plutôt que 502 (`BinanceError` porte le
+  status explicitement, voir `src/lib/api/binance.ts`).
+- Bug de skeleton de chargement bloqué : les branches de validation précoce
+  de `Simulator.tsx` (montant/dates invalides) remettent maintenant
+  `isLoading` à `false` avant leur `return`.
+- Alignement de la carte "Performance" sur mobile (elle centrait sa valeur
+  horizontalement alors que les autres cartes sont alignées à gauche).
+- `README.md` réécrit pour l'équipe S'investir (présentation, démo, stack,
+  lancement local, architecture, partis pris techniques, périmètre assumé).
+  Ne pas revenir au contenu généré par `create-next-app`.
