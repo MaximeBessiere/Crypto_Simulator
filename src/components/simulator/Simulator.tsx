@@ -16,16 +16,24 @@ interface PriceHistoryResponse {
   error?: string;
 }
 
+function dateAsInputValue(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
 function todayAsInputValue(): string {
-  return new Date().toISOString().slice(0, 10);
+  return dateAsInputValue(new Date());
 }
 
 function defaultFormValues(): DcaFormValues {
+  const defaultAsset = "bitcoin";
   return {
-    asset: "bitcoin",
+    asset: defaultAsset,
     amountPerPeriod: 100,
     frequency: "monthly",
-    startDate: "2020-01-01",
+    // Démarre exactement à la date de première cotation EUR de l'actif par
+    // défaut, plutôt qu'une date arbitraire qui déclencherait une notice de
+    // recadrage inutile dès le chargement initial.
+    startDate: dateAsInputValue(ASSET_AVAILABLE_SINCE[defaultAsset]),
     endDate: todayAsInputValue(),
   };
 }
