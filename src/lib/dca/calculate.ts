@@ -85,27 +85,52 @@ export function calculateDca(input: DcaInput): DcaResult {
 
   const investmentDates = generateInvestmentDates(startDate, endDate, frequency);
 
+  // La courbe doit suivre la valorisation du portefeuille à chaque pas de
+  // temps DISPONIBLE DANS LES PRIX, pas seulement aux dates d'investissement :
+  // sinon un "une seule fois" ne produit qu'un point isolé, alors que la
+  // quantité acquise (fixe après l'achat) continue de se valoriser chaque
+  // jour au gré du prix. On parcourt donc priceHistory en avançant en
+  // parallèle dans investmentDates (les deux sont triés par date croissante),
+  // et on cumule investi/acquis au fur et à mesure que chaque date
+  // d'investissement est atteinte.
   let totalInvested = 0;
   let totalAcquired = 0;
+  let investmentIndex = 0;
   const timeSeries: TimeSeriesPoint[] = [];
 
-  for (const date of investmentDates) {
+  function applyInvestment(date: Date) {
     const { price } = findClosestPrice(priceHistory, date);
-
     if (price <= 0) {
       throw new Error(
         `calculateDca: prix invalide (<= 0) pour la date ${date.toISOString()}.`
       );
     }
-
     totalInvested += amountPerPeriod;
     totalAcquired += amountPerPeriod / price;
+  }
+
+  for (const point of priceHistory) {
+    while (
+      investmentIndex < investmentDates.length &&
+      investmentDates[investmentIndex].getTime() <= point.date.getTime()
+    ) {
+      applyInvestment(investmentDates[investmentIndex]);
+      investmentIndex++;
+    }
 
     timeSeries.push({
-      date,
+      date: point.date,
       investedCumulative: totalInvested,
-      portfolioValue: totalAcquired * price,
+      portfolioValue: totalAcquired * point.price,
     });
+  }
+
+  // Dates d'investissement postérieures au dernier prix disponible (ne
+  // devrait pas arriver tant que priceHistory couvre bien [startDate, endDate],
+  // mais on les comptabilise tout de même dans les totaux par sécurité).
+  while (investmentIndex < investmentDates.length) {
+    applyInvestment(investmentDates[investmentIndex]);
+    investmentIndex++;
   }
 
   const finalPrice = findClosestPrice(priceHistory, endDate).price;
